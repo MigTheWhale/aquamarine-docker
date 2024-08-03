@@ -1,0 +1,59 @@
+## Stage 1: NPM Dependencies
+FROM node:latest AS BUILDER
+WORKDIR /repos
+
+## 1.1: Copying package.json and package-lock.json from all Aquamarine services
+COPY Aquamarine-Portal/package*.json ./Aquamarine-Portal/
+COPY Aquamarine-3DS/package*.json ./Aquamarine-3DS/
+COPY Aquamarine-Admin-Panel/package*.json ./Aquamarine-Admim-Panel/
+COPY Aquamarine-Offdevice/package*.json ./Aquamarine-Offdevice/
+COPY Aquamarine-Discovery/package*.json ./Aquamarine-Discovery/
+COPY Aquamarine-API/package*.json ./Aquamarine-API/
+
+## 1.2: Installing dependencies
+RUN npm install --prefix ./Aquamarine-Portal \
+    && npm install --prefix ./Aquamarine-3DS \
+    && npm install --prefix ./Aquamarine-Admim-Panel \
+    && npm install --prefix ./Aquamarine-Discovery \
+    && npm install --prefix ./Aquamarine-Offdevice \
+    && npm install --prefix ./Aquamarine-API 
+
+## Stage 2: Executing the Aquamarine services, MariaDB and the reverse-proxy
+FROM debian:bookworm 
+WORKDIR /repos
+RUN apt update -y && apt upgrade -y && apt install node npm
+EXPOSE 8080
+EXPOSE 8081
+EXPOSE 8082 
+EXPOSE 8083 
+EXPOSE 8084
+EXPOSE 8085
+EXPOSE 8086
+
+## 2.1: Copying dependencies from the builder phase
+COPY --from=builder /repos/Aquamarine-3DS ./Aquamarine-3DS
+COPY --from=builder /repos/Aquamarine-Admin-Panel ./Aquamarine-Admim-Panel
+COPY --from=builder /repos/Aquamarine-Discovery ./Aquamarine-Discovery
+COPY --from=builder /repos/Aquamarine-Offdevice ./Aquamarine-Offdevice
+COPY --from=builder /repos/Aquamarine-API ./Aquamarine-API
+COPY --from=builder /repos/Aquamarine-Portal ./Aquamarine-Portal
+
+## 2.2: Installing PM2
+RUN npm update && npm install pm2@latest
+COPY ../ecosystem.config.js ecosystem.config.js
+
+## 2.3: Installing MariaDB
+ENV MYSQL_ROOT_PASSWORD=AquamarinePassword
+ENV MYSQL_DATABASE=prod
+ENV MYSQL_DATABASE=account
+
+RUN apt update && \
+    apt install -y mariadb-server && \
+    apt clean
+
+COPY my.cnf /etc/mysql/my.cnf
+
+EXPOSE 3306
+
+RUN apt update -y && apt upgrade -y && apt install node npm apache2
+RUN npm install
