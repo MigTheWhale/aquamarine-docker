@@ -20,7 +20,7 @@ module.exports = {
         {
             name: "Aquamarine-Discovery",
             script: "index.js",
-            cwd: "repos/Aquamarine-Discovery/",
+            cwd: "./Aquamarine-Discovery/",
 
             autorestart: true,
             restart_delay: 4000,
@@ -38,7 +38,7 @@ module.exports = {
         {
             name: "Aquamarine-API",
             script: "index.js",
-            cwd: "environments/live/Aquamarine-API/",
+            cwd: "./Aquamarine-API/",
 
             autorestart: true,
             restart_delay: 4000,
@@ -56,7 +56,7 @@ module.exports = {
         {
             name: "Aquamarine-Portal",
             script: "index.js",
-            cwd: "environments/live/Aquamarine-Portal/",
+            cwd: "./Aquamarine-Portal/",
 
             autorestart: true,
             restart_delay: 4000,
@@ -74,7 +74,7 @@ module.exports = {
         {
             name: "Aquamarine-3DS",
             script: "index.js",
-            cwd: "environments/live/Aquamarine-3DS/",
+            cwd: "./Aquamarine-3DS/",
 
             autorestart: true,
             restart_delay: 4000,
@@ -92,7 +92,7 @@ module.exports = {
         {
             name: "Aquamarine-Offdevice",
             script: "index.js",
-            cwd: "environments/live/Aquamarine-Offdevice/",
+            cwd: "./Aquamarine-Offdevice/",
 
             autorestart: true,
             restart_delay: 4000,
@@ -110,7 +110,7 @@ module.exports = {
         {
             name: "Aquamarine-Admin-Panel",
             script: "index.js",
-            cwd: "environments/live/Aquamarine-Admin-Panel/",
+            cwd: "./Aquamarine-Admin-Panel/",
 
             autorestart: true,
             restart_delay: 4000,

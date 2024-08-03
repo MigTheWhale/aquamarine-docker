@@ -1,0 +1,38 @@
+# Use a specific Node.js LTS version instead of 'latest' for more stability
+FROM node:latest
+
+# Set the working directory
+WORKDIR /environment
+
+# Copy package.json and package-lock.json files for each service
+COPY ./environment/Aquamarine-Portal/package*.json /environment/Aquamarine-Portal/
+COPY ./environment/Aquamarine-3DS/package*.json /environment/Aquamarine-3DS/
+COPY ./environment/Aquamarine-Admin-Panel/package*.json /environment/Aquamarine-Admin-Panel/
+COPY ./environment/Aquamarine-Offdevice/package*.json /environment/Aquamarine-Offdevice/
+COPY ./environment/Aquamarine-Discovery/package*.json /environment/Aquamarine-Discovery/
+COPY ./environment/Aquamarine-API/package*.json /environment/Aquamarine-API/
+
+# Install PM2 globally and dependencies for each service
+RUN npm install pm2@latest -g \
+    && npm install --prefix ./Aquamarine-Portal \
+    && npm install --prefix ./Aquamarine-3DS \
+    && npm install --prefix ./Aquamarine-Admin-Panel \
+    && npm install --prefix ./Aquamarine-Discovery \
+    && npm install --prefix ./Aquamarine-Offdevice \
+    && npm install --prefix ./Aquamarine-API \
+    && npm cache clean --force
+
+# Copy the rest of the application files
+COPY ./environment/Aquamarine-Portal /environment/Aquamarine-Portal
+COPY ./environment/Aquamarine-3DS /environment/Aquamarine-3DS
+COPY ./environment/Aquamarine-Admin-Panel /environment/Aquamarine-Admin-Panel
+COPY ./environment/Aquamarine-Offdevice /environment/Aquamarine-Offdevice
+COPY ./environment/Aquamarine-Discovery /environment/Aquamarine-Discovery
+COPY ./environment/Aquamarine-API /environment/Aquamarine-API
+COPY ./environment/ecosystem.config.js /environment/
+
+# Expose necessary ports
+EXPOSE 8080 8081 8082 8083 8084 8085 8086
+
+# Start the applications with PM2
+CMD ["pm2-runtime", "start", "ecosystem.config.js"]

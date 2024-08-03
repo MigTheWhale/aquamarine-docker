@@ -1,0 +1,25 @@
+services:
+  aquamarine-services: ## Meaning all Aquamarine node applications, should be broken into individual services later. PoC-only.
+    build:
+      context: .
+      dockerfile: ./DockerFile
+    volumes:
+      - .:/repos
+    ports:
+      - "8080:8080"
+      - "8081:8081"
+      - "8082:8082"
+      - "8083:8083"
+      - "8084:8084"
+      - "8085:8085"
+      - "8086:8086"
+    depends_on:
+      - mariadb
+
+  mariadb:
+    image: mariadb:latest
+    environment:
+      MYSQL_ROOT_PASSWORD: AquamarinePassword
+      MYSQL_DATABASE: prod
+    ports:
+      - "3306:3306"
